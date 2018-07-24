@@ -1,14 +1,9 @@
 # This script: Reads and binds several Travel-time Matrices
-  
-  
-  
-  
-# set working Directory
+
+  # set working Directory
   setwd("R:/Dropbox/Dout/Data Dout")
 
-
-
-
+  
 ##################### Load packages -------------------------------------------------------
 
 # source("./R scripts/00_LoadPackages.R")
@@ -31,18 +26,29 @@ library(RColorBrewer)
 library(fst)
 
 
+
+
+
 ########## 1 Get a List of all OD Matrix files -------------------------------------------------------
 
 
-# create fucntion to read OTP outputs and save a single travel-time matrix
-  save_traveltime_matrix <- function(grid, data_file, id, conunterfactual){
-  
 
+save_traveltime_matrix <- function(grid, data_file, id, conunterfactual){
+  
+  # grid <- "500"
+  # data_file <- "gridDaTA_0500"
+  # conunterfactual = F
+  
   
   # pattern of string to read files of deaprture time for each grid scale
   pattern = paste0('traveltime_matrix_', grid)
   
 
+  # ids with pop
+  oaccess_wide <- fread("./accessibility/output_oAccess_wide_500_paper4.csv")
+  IDs_pop <- oaccess_wide$ID[which(oaccess_wide$pop >0 )] %>% sort()
+  IDs_jobs <- oaccess_wide$ID[which(oaccess_wide$totaljobs >0 )] %>% sort()
+  rm(oaccess_wide)
   
 # get all files of each departure time into a list
   cat("Reading travel-time matrices \n")
@@ -55,8 +61,6 @@ library(fst)
     full_scenario <- list.files("R:/Dropbox/OpenTripPlanner/jython_rio_transbrasil_opplan2014", pattern= pattern, full.names=TRUE)
     partial_scenario <- list.files("R:/Dropbox/OpenTripPlanner/jython_rio_transbrasil_opplan2014_partial", pattern= pattern, full.names=TRUE)
     
-    # full_scenario <- full_scenario[4:5]
-    # partial_scenario <- partial_scenario[4:5]
     policy_files <- c(full_scenario, partial_scenario)
     
 
@@ -65,10 +69,22 @@ library(fst)
   cat(paste("using", no_cores, "cores \n"))
   
 
-##########  3.0 read basline matrix
+  ##########  3.0 read basline matrix
   
-  gc(reset = T)
-  baseline <- lapply(filenames2017, fread) %>% rbindlist()
+  read_clean <- function(my_files){
+                            temp_dt <- fread(my_files, nThread = 6)
+                            temp_dt <- temp_dt[ origin %in% IDs_pop,]
+                            temp_dt <- temp_dt[ destination %in% IDs_jobs,]
+                            gc(reset = T)
+                            gc(reset = T)
+                            gc(reset = T)
+                            return(temp_dt)
+                            }
+
+  
+system.time( baseline <- lapply(filenames2017, read_clean) %>% rbindlist() )
+beep()
+
   
   # add freq column and reorder columns
   baseline[, freq := "baseline"]
@@ -76,13 +92,44 @@ library(fst)
   
   
   
-########## 3.1 Read policy matrices
-  
-  policy_matrices <- lapply(policy_files, fread) %>% rbindlist()
+  ########## 3.1 Read policy matrices
+  gc(reset = T)
+  gc(reset = T)
   gc(reset = T)
   
+  system.time( policy_matrices <- lapply(policy_files, read_clean) %>% rbindlist() )
+  #  policy_matrices <- lapply(policy_files, fread, nThread=6) %>% rbindlist()
+  gc(reset = T)
+  beepr::beep()
   
 ########## 3.2 Rbind all matrices
+  rm(list=setdiff(ls(), c("", "baseline") ))
+  gc(reset = T)
+  gc(reset = T)
+  
+  # Remove 0 num ano e infinito na diferenca
+  policy_matrices <- subset(policy_matrices, origin != 5445 ) # industrial areas -  fronteira nordeste
+  policy_matrices <- subset(policy_matrices, origin != 5446 ) # industrial areas -  fronteira nordeste
+  policy_matrices <- subset(policy_matrices, origin != 5463 ) # industrial areas -  fronteira nordeste
+  policy_matrices <- subset(policy_matrices, origin != 4689 ) # rural area - north
+  
+  baseline <- subset( baseline, origin != 5445 ) # industrial areas -  fronteira nordeste
+  baseline <- subset( baseline, origin != 5446 ) # industrial areas -  fronteira nordeste
+  baseline <- subset( baseline, origin != 5463 ) # industrial areas -  fronteira nordeste
+  baseline <- subset( baseline, origin != 4689 ) # rural area - north
+  
+  policy_matrices[, walk_distance := NULL]
+  policy_matrices[, year := freq]
+  policy_matrices[, freq := NULL]
+  
+  baseline[, walk_distance := NULL]
+  baseline[, year := freq]
+  baseline[, freq := NULL]
+  
+  
+  gc(reset = T)
+  gc(reset = T)
+  
   
   ttmatrix <- rbindlist(list(policy_matrices, baseline))
   head(ttmatrix)
@@ -90,6 +137,10 @@ library(fst)
   rm(policy_matrices, baseline)
   gc(reset = T)
   
+
+    
+
+  #rm(list=setdiff(ls(), "ttmatrix"))
   gc(reset=TRUE)
   gc(reset=TRUE)
   gc(reset=TRUE)
@@ -97,13 +148,7 @@ library(fst)
   
   
   
-  # Remove 0 num ano e infinito na diferenca
-    ttmatrix <- subset(ttmatrix, origin != 5445 ) # industrial areas -  fronteira nordeste
-    ttmatrix <- subset(ttmatrix, origin != 5446 ) # industrial areas -  fronteira nordeste
-    ttmatrix <- subset(ttmatrix, origin != 5463 ) # industrial areas -  fronteira nordeste
-    ttmatrix <- subset(ttmatrix, origin != 4689 ) # rural area - north
-
-  
+    
   
   
   
@@ -113,10 +158,7 @@ library(fst)
   head(ttmatrix)
   
   
-  ## Convert year
-  years <- table(ttmatrix$year)
-  
-  
+
   
   
   # read jobs data
@@ -129,7 +171,7 @@ library(fst)
   gc(reset=TRUE)
   
   
-# Merge job count with OD Matrix, allocating job counts to Destination
+  # Merge job count with OD Matrix, allocating job counts to Destination
   cat("Merging data to tt matrices  \n")
   
   # merge data using DATA.TABLE (faster)
@@ -137,7 +179,6 @@ library(fst)
   gc(reset=TRUE)
   gc(reset=TRUE)
   gc(reset=TRUE)
-#  ttmatrix <- ttmatrix[grid_data_orig, on=c('origin'='ID'), nomatch=0]
   ttmatrix[grid_data_orig, on=c('origin'='ID'), c("pop", "decile") := list(i.pop, i.decile)]
   
   
@@ -147,7 +188,6 @@ library(fst)
   gc(reset=TRUE)
   
   # destination
-    # merga_all>>> ttmatrix <- ttmatrix[grid_data_dest, on=c('destination'='ID'), nomatch=0]
     ttmatrix[grid_data_dest, on=c('destination'='ID'), c("totaljobs", "edubas", "edumed", "edusup") := list(i.totaljobs, i.edubas, i.edumed, i.edusup)]
   
   # clean memory
@@ -170,9 +210,7 @@ library(fst)
    system.time (  fst::write.fst(ttmatrix, path="./accessibility/matrix_500_paper4.fst") )
    # 181.71 sec
   
-  # system.time (  fwrite(ttmatrix, paste0("./accessibility/matrix_",grid,"_",names(years)[1],"_",names(years)[2],"_partial_newtrains.csv") ) )
 
-  
   return(ttmatrix)
   #beep()
   gc(reset=TRUE)
@@ -180,10 +218,14 @@ library(fst)
 
 
 
-matrix_0500 <- save_traveltime_matrix(grid='500', data_file='gridDaTA_0500')
+ttmatrix <- save_traveltime_matrix(grid='500', data_file='gridDaTA_0500' , conunterfactual = F )
 gc(reset=TRUE)
 
 gc(reset=TRUE)
 gc(reset=TRUE)
+
+
+
+
 
 

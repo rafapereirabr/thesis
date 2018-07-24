@@ -1,13 +1,17 @@
 
 # This script:
-#  1 reads travel time-matix
-#  2 calculates origing accessibility to jobs
-#  3 saves accessibility results in long and wider format
+# 1 Prepare Origin-Destination points
+# 2 compute OD Matricies in Jython ( !!! outside R !!!)
+    # (to be done yet) 3 Compute Population and Jobs within 1km radius before and after investments
+# 4 Accessibility, compute
+# Analysis
+
 
 
 
 # set working Directory
 setwd("R:/Dropbox/Dout/Data Dout")
+
 
 
 ##################### Load packages -------------------------------------------------------
@@ -34,46 +38,35 @@ source("./R scripts/00_LoadPackages.R")
 
     
 #####################  Fun to get Accessibility  -------------------------
+
 gc(reset = T)
   
   
-# function to: 
-#  1 read travel time-matix
-#  2 calculate origing accessibility to jobs
-#  3 save accessibility results in long and wider format
-
-get_oaccess <- function(ttfile, gridDATA){
+get_oaccess <- function(gridDaTA_0500){
     
+
 
     # cat message
     cat("Loading tt matrix\n")
-    ttmatrix <- fst::read.fst( ttfile )
+    ttmatrix <- fst::read.fst(paste0("./accessibility/matrix_500_paper4.fst")) 
     gc(reset = T)
     gc(reset = T)
     beep()
     
+    
+    gc(reset = T)
+    gc(reset = T)
     
     ##### 1 Compute ORIGIN Accessibility, compute cummulative
     
     # cat message
     cat("estimating accessibility\n")
     
-    
+    system.time(
     # 1 - All accessible activities from each ORIGIN across they day
     access_intraday <- setDT(ttmatrix)[, .( decile = decile[1]
                                      , medtravel_time = median( travel_time, na.rm=T)
-                                     # , oaccess_hospitals_15 = sum( hospitals[which( travel_time <= 15)], na.rm=T)
-                                     # , oaccess_hospitals_30 = sum( hospitals[which( travel_time <= 30)], na.rm=T)
-                                     # , oaccess_hospitals_60 = sum( hospitals[which( travel_time <= 60)], na.rm=T)
-                                     # , oaccess_hospitals_90 = sum( hospitals[which( travel_time <= 90)], na.rm=T)
-                                     # , oaccess_hospitals_120 = sum(hospitals[which( travel_time <= 120)], na.rm=T)
-                                     # 
-                                     # , oaccess_schools_15 = sum( schools[which( travel_time <= 15)], na.rm=T)
-                                     # , oaccess_schools_30 = sum( schools[which( travel_time <= 30)], na.rm=T)
-                                     # , oaccess_schools_60 = sum( schools[which( travel_time <= 60)], na.rm=T)
-                                     # , oaccess_schools_90 = sum( schools[which( travel_time <= 90)], na.rm=T)
-                                     # , oaccess_schools_120 = sum(schools[which( travel_time <= 120)], na.rm=T)
-                                     
+
                                      , oaccess_jobs_15 = sum( totaljobs[which( travel_time <= 15)], na.rm=T)
                                      , oaccess_jobs_30 = sum( totaljobs[which( travel_time <= 30)], na.rm=T)
                                      , oaccess_jobs_60 = sum( totaljobs[which( travel_time <= 60)], na.rm=T)
@@ -97,26 +90,20 @@ get_oaccess <- function(ttfile, gridDATA){
                                      , oaccess_edusup_60 = sum( edusup[which( travel_time <= 60)], na.rm=T)
                                      , oaccess_edusup_90 = sum( edusup[which( travel_time <= 90)], na.rm=T)
                                      , oaccess_edusup_120 = sum(edusup[which( travel_time <= 120)], na.rm=T)
-                                     ),
-                                     by=.(year, origin, depart_time) ]
-
+    ),
+    by=.(year, origin, depart_time) ]
+    )
     
     
-    # 2 - DAY median access by origin, year
+    gc(reset = T)
+    gc(reset = T)
+    
+    
+    
+    # DAY median access by origin, year
     origin_access_med <- access_intraday[, .( decile = decile[1]
                                               , medtravel_time = median( medtravel_time, na.rm=T)
-                                              # , med_oaccess_hospitals_15 = median( oaccess_hospitals_15 , na.rm=T)
-                                              # , med_oaccess_hospitals_30 = median( oaccess_hospitals_30 , na.rm=T)
-                                              # , med_oaccess_hospitals_60 = median( oaccess_hospitals_60 , na.rm=T)
-                                              # , med_oaccess_hospitals_90 = median( oaccess_hospitals_90 , na.rm=T)
-                                              # , med_oaccess_hospitals_120 =median( oaccess_hospitals_120, na.rm=T)
-                                              # 
-                                              # , med_oaccess_schools_15 = median( oaccess_schools_15 , na.rm=T)
-                                              # , med_oaccess_schools_30 = median( oaccess_schools_30 , na.rm=T)
-                                              # , med_oaccess_schools_60 = median( oaccess_schools_60 , na.rm=T)
-                                              # , med_oaccess_schools_90 = median( oaccess_schools_90 , na.rm=T)
-                                              # , med_oaccess_schools_120 =median( oaccess_schools_120, na.rm=T)
-                                              
+
                                               , med_oaccess_jobs_15 = median( oaccess_jobs_15 , na.rm=T)
                                               , med_oaccess_jobs_30 = median( oaccess_jobs_30 , na.rm=T)
                                               , med_oaccess_jobs_60 = median( oaccess_jobs_60 , na.rm=T)
@@ -140,8 +127,11 @@ get_oaccess <- function(ttfile, gridDATA){
                                               , med_oaccess_edusup_60 = median( oaccess_edusup_60 , na.rm=T)
                                               , med_oaccess_edusup_90 = median( oaccess_edusup_90 , na.rm=T)
                                               , med_oaccess_edusup_120 =median( oaccess_edusup_120, na.rm=T)
-                                              ),
-                                         by=.(origin, year)]
+    ),
+    by=.(origin, year)]
+    
+    
+    
     
     
     head(origin_access_med) # check data structure
@@ -154,7 +144,7 @@ get_oaccess <- function(ttfile, gridDATA){
     gc(reset=TRUE)
     
     
-# Compute Accessibility MATCH 
+    # Compute Accessibility MATCH 
     # high income people = jobs with high and med education
     # low income people = jobs with low and med education
     
@@ -168,21 +158,9 @@ get_oaccess <- function(ttfile, gridDATA){
     summary(origin_access_med$med_oaccess_jobsmatch_60)
     summary(origin_access_med$med_oaccess_jobsmatch_120)
     
-    
-    
 ########## Calculate % Accessibility as a proportion of opportunities in the city --------
     
-    # for (i in c(15,30,60,90,120)) {
-    #   a <- paste0("med_oaccess_hospitals_",i)
-    #   origin_access_med[, paste0("prop_med_oaccess_hospitals_",i):= get(a) / totalhospitals ]
-    # }
-    # 
-    # 
-    # for (i in c(15,30,60,90,120)) {
-    #   a <- paste0("med_oaccess_schools_",i)
-    #   origin_access_med[, paste0("prop_med_oaccess_schools_",i):= get(a) / totalschools ]
-    # }
-    
+
     for (i in c(15,30,60,90,120)) {
       a <- paste0("med_oaccess_jobs_",i)
       origin_access_med[, paste0("prop_med_oaccess_jobs_",i):= get(a) / totaljobs ]
@@ -194,9 +172,7 @@ get_oaccess <- function(ttfile, gridDATA){
     }
     
     
-    # distribution of access to Jobs   # max values have to be <= 100 %  
-    # summary(origin_access_med$prop_med_oaccess_schools_60)
-    # summary(origin_access_med$prop_med_oaccess_hospitals_60)
+    # distribution of access to Jobs   # NAO PODE DAR MAIS DE 100 %  
     summary(origin_access_med$prop_med_oaccess_jobs_60)
     summary(origin_access_med$prop_med_oaccess_jobsmatch_60)
     
@@ -204,12 +180,12 @@ get_oaccess <- function(ttfile, gridDATA){
     
 ######## MERGE Origin data to Access and SAVE ----------------
     
-#>>>>> Save data, TWO Options : (1) long format with Years Stacked  , (2) wide format, where Each year is a column
+    # Save data, TWO Options : (1) Years are Stacked  , (2) Each year is a column
     
-###### (1) Years are Stacked  
+    ###### (1) Years are Stacked  
     
     # select columns with characteristics of origin cells
-    gridDATAorig <- gridDATA[ , .(ID, decile , X, Y, elevation, pop, income, prop_poor, unemployment, unemployment_fun, unemployment_med, unemployment_sup) ][order(ID)]
+    gridDATAorig <- gridDaTA_0500[ , .(ID, decile , X, Y, elevation, pop, income, prop_poor, unemployment, unemployment_fun, unemployment_med, unemployment_sup) ][order(ID)]
     
     
     
@@ -230,14 +206,14 @@ get_oaccess <- function(ttfile, gridDATA){
     for (i in c(15,30,60,90,120)) {
       a <- paste0("prop_med_oaccess_jobsmatch_",i)
 
-      origin_access_med_stacked[, paste0("dif_access_ratio_partial_",i) := ( get(a)[year == "2017brt_partial"] / get(a)[year == "2017mix"]), by = ID]
-      origin_access_med_stacked[, paste0("dif_access_ratio_full_",i) := ( get(a)[year == "2017brt_full"] / get(a)[year == "2017mix"]), by = ID]
-      origin_access_med_stacked[, paste0("dif_access_ratio_fullpart_",i) := ( get(a)[year == "2017brt_full"] / get(a)[year == "2017brt_partial"]), by = ID]
+      origin_access_med_stacked[, paste0("dif_access_ratio_partial_",i) := ( get(a)[year == "partial"] / get(a)[year == "baseline"]), by = ID]
+      origin_access_med_stacked[, paste0("dif_access_ratio_full_",i) := ( get(a)[year == "full"] / get(a)[year == "baseline"]), by = ID]
+      origin_access_med_stacked[, paste0("dif_access_ratio_fullpart_",i) := ( get(a)[year == "full"] / get(a)[year == "partial"]), by = ID]
       
       
-      origin_access_med_stacked[, paste0("dif_access_ratio_",i) := ifelse( year == "2017brt_partial", ( get(a)[year == "2017brt_partial"] / get(a)[year == "2017mix"]), 
-                                                                   ifelse( year == "2017brt_full", ( get(a)[year == "2017brt_full"] / get(a)[year == "2017mix"]) ,
-                                                                   ifelse( year == "2017mix", ( get(a)[year == "2017brt_full"] / get(a)[year == "2017brt_partial"]) , NA ))), by = ID] 
+      origin_access_med_stacked[, paste0("dif_access_ratio_",i) := ifelse( year == "partial", ( get(a)[year == "partial"] / get(a)[year == "baseline"]), 
+                                                                   ifelse( year == "full", ( get(a)[year == "full"] / get(a)[year == "baseline"]) ,
+                                                                   ifelse( year == "baseline", ( get(a)[year == "full"] / get(a)[year == "partial"]) , NA ))), by = ID] 
                                                                                     
                       
                       }
@@ -246,7 +222,7 @@ get_oaccess <- function(ttfile, gridDATA){
     
     
     
-#### (1) SAVE long-stacked output oaccess  ------------------
+#### SAVE long-stacked output oaccess  ------------------
     
     # cat message
     cat("Saving access estimtes - long format \n")
@@ -263,14 +239,14 @@ get_oaccess <- function(ttfile, gridDATA){
     
     
     
-###### (2) Each year is a column. We basically add the Average Accessibility info to gridDATA file
+###### (2) Each year is a column, Allocate Average Accessibility to gridDATA
     
     # subset each year
     temp <- table(origin_access_med$year)
     
-    baseline <- origin_access_med[year=="2017mix", c(1,3:39), with=F]
-    partial <- origin_access_med[year=="2017brt_partial", c(1,3:39), with=F]
-    full <- origin_access_med[year=="2017brt_full", c(1,3:39), with=F]
+    baseline <- origin_access_med[year=="baseline", c(1,3:39), with=F]
+    partial <- origin_access_med[year=="partial", c(1,3:39), with=F]
+    full <- origin_access_med[year=="full", c(1,3:39), with=F]
     
     # rename accessibility columns
     names(baseline)[3:38] <- paste0( names(baseline)[3:38],"_baseline")
@@ -278,7 +254,7 @@ get_oaccess <- function(ttfile, gridDATA){
     names(full)[3:38] <- paste0( names(full)[3:38],"_full")
     
     # merge access variables to grid data set  
-    origin_access_med_wide <- left_join(as.data.frame(gridDATA), baseline, by=c("ID"="origin", "decile")) %>% 
+    origin_access_med_wide <- left_join(as.data.frame(gridDaTA_0500), baseline, by=c("ID"="origin", "decile")) %>% 
       left_join(., partial, by=c("ID"="origin",  "decile")) %>% 
       left_join(., full, by=c("ID"="origin",  "decile")) %>% setDT()
     
@@ -291,47 +267,7 @@ get_oaccess <- function(ttfile, gridDATA){
        origin_access_med_wide <- subset(origin_access_med_wide, ID != 4689 ) # rural area - north
 
            
-    # Create var with Accessibility changes
-    
-    
-    #!!!!!!!!!!!!!!!!!!! AQUI correcao para NA
-    # cols <- names(origin_access_med_wide)[29:139]
-    # setDT(origin_access_med_wide)[, (cols) := lapply(.SD, function(x) {ifelse(is.na(x), 0 ,x)} ), .SDcols = cols]
-    ## setDT(origin_access_med_wide)[, (cols) := lapply(.SD, function(x) {ifelse( x==0, 0.001 ,x)} ), .SDcols = cols]
-    ## setDT(origin_access_med_wide)[, (cols) := lapply(.SD, function(x) {ifelse( x==0, NA ,x)} ), .SDcols = cols]
-    
-    summary(origin_access_med_wide$med_oaccess_jobs_30_partial)
-    summary(origin_access_med_wide$med_oaccess_jobs_30_full)
-    
-    
-  #   # hospitals
-  #   # absolute
-  #   for (i in c(15,30,60,90,120)) {
-  #     b <- paste0("med_oaccess_hospitals_",i,"_baseline")
-  #     p <- paste0("med_oaccess_hospitals_",i,"_partial")
-  #     f <- paste0("med_oaccess_hospitals_",i,"_full")
-  #     
-  #     origin_access_med_wide[, paste0("diff_ratio_oaccess_hospitals_partial_",i) := (get(p)) / (get(b)) , by= ID]
-  #     origin_access_med_wide[, paste0("diff_ratio_oaccess_hospitals_full_",i) := (get(f)) / (get(b)) , by= ID]
-  #     origin_access_med_wide[, paste0("diff_ratio_oaccess_hospitals_fullpart_",i) := (get(f)) / (get(p)) , by= ID]
-  #     }
-  #   
-  #   
-  # 
-  #   
-  # # Schools
-  # # absolute
-  #   for (i in c(15,30,60,90,120)) {
-  #     b <- paste0("med_oaccess_schools_",i,"_baseline")
-  #     p <- paste0("med_oaccess_schools_",i,"_partial")
-  #     f <- paste0("med_oaccess_schools_",i,"_full")
-  #     
-  #     origin_access_med_wide[, paste0("diff_ratio_oaccess_schools_partial_",i) := (get(p)) / (get(b)) , by= ID]
-  #     origin_access_med_wide[, paste0("diff_ratio_oaccess_schools_full_",i) := (get(f)) / (get(b)) , by= ID]
-  #     origin_access_med_wide[, paste0("diff_ratio_oaccess_schools_fullpart_",i) := (get(f)) / (get(p)) , by= ID]
-  #   }
-  #   
-    
+# Create var with Accessibility changes
     
   # jobsmatch
   # Absolute
@@ -349,9 +285,8 @@ get_oaccess <- function(ttfile, gridDATA){
         
     summary( origin_access_med_wide$diff_ratio_oaccess_jobsmatch_full_60 )
     summary( origin_access_med_wide$diff_ratio_oaccess_jobsmatch_partial_60 )
-
-        
-#### (2) SAVE wide output oaccess  ------------------
+    
+  #### SAVE wide output oaccess  ------------------
     
     # cat message
     cat("Saving access estimtes - wide format \n")
@@ -372,12 +307,8 @@ get_oaccess <- function(ttfile, gridDATA){
   
   
   
-
-# file locaton
-  my_ttfile <- "./accessibility/matrix_500_paper4.fst"
-
-# Apply function
-  oaccess_0500 <- get_oaccess( ttfile= my_ttfile,  gridDATA = gridDaTA_0500 )  
+# Load Matrix
+  oaccess_0500 <- get_oaccess( gridDaTA_0500 )  
 
     
   
@@ -386,3 +317,181 @@ get_oaccess <- function(ttfile, gridDATA){
 
   
   
+
+  
+
+#### #### #### #### ####  check results   ------------------
+
+  # read data
+  oaccess_long_0500 <- fread("./accessibility/output_oAccess_long_500_paper4.csv")
+  oaccess_wide_0500 <- fread("./accessibility/output_oAccess_wide_500_paper4.csv")
+  
+  
+  
+  
+  
+summary(oaccess_wide_0500$prop_med_oaccess_jobsmatch_60_baseline) 
+summary(oaccess_wide_0500$prop_med_oaccess_jobsmatch_60_partial)
+summary(oaccess_wide_0500$prop_med_oaccess_jobsmatch_60_full)
+
+
+
+
+
+#how many cases of lost access to hospitals
+  # jobs match
+  plot(oaccess_wide_0500$diff_minus_oaccess_jobsmatch_60, col = ifelse(oaccess_wide_0500$diff_minus_oaccess_jobsmatch_60 < 0,'red','blue'), pch = 19 )
+  plot(oaccess_wide_0500$diff_ratio_oaccess_jobsmatch_60, col = ifelse(oaccess_wide_0500$diff_ratio_oaccess_jobsmatch_60 < 1,'red','blue'), pch = 19 )
+
+
+# distribution of access to
+library(ggjoy)
+      
+    # jobs
+  
+  test <- subset(oaccess_wide_0500, diff_ratio_oaccess_jobsmatch_partial_60 != 1)
+     
+  ggplot(na.omit(test, cols=c('decile', 'diff_ratio_oaccess_jobsmatch_partial_60')), aes(x = diff_ratio_oaccess_jobsmatch_partial_60, y = factor(decile), fill = factor(decile))) +
+        geom_joy(scale = 4) + theme_joy() +
+        scale_fill_brewer(palette = "RdBu", name = "Income Decile") +
+        scale_y_discrete(expand = c(0.01, 0)) +
+        scale_x_continuous(expand = c(0, 0)) +
+        geom_vline(xintercept=0) 
+
+                
+      
+
+
+##### check plot results -------------
+
+# jobs
+ggplot(oaccess_wide_0500, aes(x=prop_med_oaccess_jobsmatch_60_baseline, 
+                               y=prop_med_oaccess_jobsmatch_60_partial), label = idhex500) + 
+  geom_point(aes( color=factor(decile), size=pop), alpha = 0.4) +
+  scale_colour_brewer(palette="RdBu") +
+  geom_abline() +
+  coord_equal()
+
+      
+      
+      ggplot(oaccess_wide_0500, aes(x=prop_med_oaccess_jobsmatch_60_baseline, 
+                                         y=prop_med_oaccess_jobsmatch_60_full), label = idhex500) + 
+        geom_point(aes( color=factor(decile), size=pop), alpha = 0.4) +
+        scale_colour_brewer(palette="RdBu") +
+        geom_abline() +
+        coord_equal()
+      
+      
+      ggplot() + 
+        geom_point(data=oaccess_wide_0500, aes( x=prop_med_oaccess_jobsmatch_60_baseline, y=prop_med_oaccess_jobsmatch_60_full , size=pop), color="gray", alpha = 0.4) +
+       geom_point(data=oaccess_wide_0500, aes( x=prop_med_oaccess_jobsmatch_60_baseline, y=prop_med_oaccess_jobsmatch_60_partial, size=pop, color=factor(decile)), alpha = 0.4) +
+        scale_colour_brewer(palette="RdBu") +
+        geom_abline() +
+        coord_equal()
+      
+      
+      
+      
+      
+      
+
+#### test  MAPS ---------
+      
+        
+        
+      # read maps
+      muni <- st_read(dsn = './Shapes_IBGE', layer ='muni')
+      hex_0500 <- st_read(dsn = './Spatial Grid', layer ='hex_grid_0500')
+      
+      # Merge access data with sf files  
+      hexriopoly500_long  <- left_join( hex_0500 , oaccess_long_0500, by= "ID" )  
+      hexriopoly500_wide  <- left_join( hex_0500 , oaccess_wide_0500, by= "ID" )  
+      
+      
+      
+
+# remove basesile scenario
+      hexriopoly500_long <- subset(hexriopoly500_long, year != "baseline")
+      
+      
+      # Map difference RATIO
+      dif_access_map_ratio <- function(var){  
+                                                    ggplot(data= subset(hexriopoly500_long, !is.na(get(var))) ) +
+                                                      geom_sf(data= muni,  fill=NA, color="gray70") +
+                                                      geom_sf( aes(fill= (get(var)-1)*100, label=ID ), color=NA) +
+                                                      scale_fill_gradient2( low = "#2166ac", mid = "#f7f7f7", high = "#b2182b", midpoint = 1, space = "Lab", na.value = "grey50", guide = "colourbar") +
+                                                    #  scale_fill_distiller(palette = "Spectral", midpoint = 1) +
+                                                      theme_map() +
+                                                      facet_wrap(~year, ncol =2)
+                                                  }
+      
+dif_access_map_ratio('dif_access_ratio_30' )
+dif_access_map_ratio('dif_access_ratio_60' )
+dif_access_map_ratio('dif_access_ratio_90' )
+dif_access_map_ratio('dif_access_ratio_120' )
+beep()
+
+  ggplotly()
+      
+  
+  ggplot(data= subset(hexriopoly500_long, dif_access_ratio_120<1) ) +
+    geom_sf(data= muni,  fill=NA, color="gray70") +
+    geom_sf( aes(fill= (dif_access_ratio_120-1)*100, label=ID ), color=NA) +
+    scale_fill_gradient2( low = "green", mid = "#f7f7f7", high = "#b2182b", midpoint = 1, space = "Lab", na.value = "grey50", guide = "colourbar") +
+    theme_map() +
+    facet_wrap(~year, ncol =1)
+  
+  
+      # IDs que tem access muito baixo em 2017mix
+      # rodar novamente matrizes de 2017
+      # rever resultados
+
+      oaccess_long_0500[ ID == 809, .(ID, year, prop_med_oaccess_jobs_30)]
+      oaccess_long_0500[ ID == 721, .(ID, year, prop_med_oaccess_jobs_30)]
+      oaccess_long_0500[ ID == 2417, .(ID, year, prop_med_oaccess_jobs_30)]
+      oaccess_long_0500[ ID == 2296, .(ID, year, prop_med_oaccess_jobs_30)]
+      
+      
+
+            
+      
+      
+      dif_access_map_ratio('dif_access_ratio_60' )
+      dif_access_map_ratio('dif_access_ratio_90' )
+      dif_access_map_ratio('dif_access_ratio_120' )
+      beep()
+      
+      
+      
+      
+      
+ # Map relative access
+relat_access_map <- function(var){  
+        ggplot(data= subset(hexriopoly500_long, !is.na(get(var))) ) +
+          geom_sf(data= muni,  fill=NA, color="gray70") +
+          geom_sf( aes(fill= get(var)*100, label=ID ), color=NA) +
+          scale_fill_gradient2( low = "#2166ac", mid = "#f7f7f7", high = "#b2182b", midpoint = 1, space = "Lab", na.value = "grey50", guide = "colourbar") +
+          theme_map() +
+          facet_wrap(~year, ncol =2)
+      }
+      
+      
+      
+relat_access_map('prop_med_oaccess_jobsmatch_30' )
+relat_access_map('prop_med_oaccess_jobsmatch_60' )
+relat_access_map('prop_med_oaccess_jobsmatch_90' )
+relat_access_map('prop_med_oaccess_jobsmatch_120' )
+beep()
+
+
+      
+      
+
+      ggplot(data= subset(hexriopoly500_wide, !is.na(diff_ratio_oaccess_jobsmatch_fullpart_30)) ) +
+        geom_sf(data= muni,  fill=NA, color="gray70") +
+        geom_sf( aes(fill= (diff_ratio_oaccess_jobsmatch_fullpart_30-1)*100, label=ID ), color=NA) +
+        scale_fill_gradient2( low = "#2166ac", mid = "#f7f7f7", high = "#b2182b", midpoint = 1, space = "Lab", na.value = "grey50", guide = "colourbar") +
+        theme_map()
+      
+      
+      beep()
