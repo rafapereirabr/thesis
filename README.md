@@ -1,2 +1,6 @@
-# thesis
-scripts of my PhD Thesis
+# Distributive Justice and Transportation Equity: Inequality in accessibility in Rio de Janeiro
+
+This repository contains code related to my PhD thesis "Distributive Justice and Transportation Equity: Inequality in accessibility in Rio de Janeiro", presented for the degree of Doctor of Philosophy at the University of Oxford in 2018. The thesis focuses on the distributional effects of transport policies in terms of how they shape inequalities in access to opportunities. In the empirical research, I analyzed how recent transport investments implemented in Rio de Janeiro (Brazil) in preparation to host the 2014 Football World Cup and the 2016 Olympic Games have impacted accessibility to sports venues, healthcare facilities, public schools and job opportunities for different income groups. 
+
+
+The analyses presented in in chapters 3 and 4 estimated the ex-post accessibility impacts of transport policies implemented in Rio between 2014 and 2017. The analysis presented in Chapter 5 illustrates how ex-ante accessibility analysis can be used to evaluate the equity and accessibility impacts of different transport project scenarios in their early planning stages using open-source software and standardized datasets. 
