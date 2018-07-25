@@ -11,7 +11,11 @@ The thesis focuses on the distributional effects of transport policies in terms 
 
 * **Chapter** 3 analyzes the catchment areas of sports venues and healthcare facilities in terms of how many people from different income groups can reach those locations from their homes using only public transport and walking. The estimates are calculated using a before-and-after comparison of Rio’s transport network (2014-2017) and a quasicounterfactual.
 scenario.
+   * [Paper published in the journal _Cities_](https://www.sciencedirect.com/science/article/pii/S0264275117311563)
 
 * **Chapter 4** estimates how recent transport policies implemented in Rio between 2014 and 2017 have impacted people from different income groups in terms of the number of schools and job opportunities they could reach from their homes via public transport. A spatial regression model and cluster analysis are used to estimate the distributive effects of those transport policies on accessibility inequalities and to test whether these effects are robust when analysis is conducted using different geographical scales and zoning schemes.
+   * [Paper under review](https://osf.io/preprints/socarxiv/cghx2) 
 
 * **Chapter** 5 illustrates how ex-ante accessibility analysis can be used to evaluate the equity and accessibility impacts of different transport project scenarios in their early planning stages using open-source software and standardized datasets. This chapter evaluates the scenarios of full and partial construction of the TransBrasil BRT corridor, currently under development in Rio de Janeiro. It looks more specifically at how these two scenarios could impact employment accessibility of different income groups and how these results vary when different travel time thresholds are considered.
+   * [Paper forthcoming in the _Journal of Transpor Geography_](https://osf.io/sut7r/) 
+
