@@ -7,7 +7,7 @@ This repository contains code related to my PhD thesis "Distributive Justice and
 The thesis focuses on the distributional effects of transport policies in terms of how they shape inequalities in people's access to opportunities. In the empirical research, I analyzed how recent transport investments implemented in Rio de Janeiro (Brazil) in preparation to host the 2014 Football World Cup and the 2016 Olympic Games have impacted accessibility to sports venues, healthcare facilities, public schools and job opportunities for different income groups. 
 
 ## Code
-* The scripts in the root of 'Rscripts' folder organize/create the data and few functions used in the empirical chapters.
+* The scripts in the root of `Rscripts` folder organize/create the data and few functions used in the empirical chapters. The scripts are kept here for personal reference and I recognize that the code is not well documented or explained.
 
 * **Chapter** 3 analyzes the catchment areas of sports venues and healthcare facilities in terms of how many people from different income groups can reach those locations from their homes using only public transport and walking. The estimates are calculated using a before-and-after comparison of Rio’s transport network (2014-2017) and a quasicounterfactual.
 scenario.
