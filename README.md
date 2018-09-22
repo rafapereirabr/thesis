@@ -20,7 +20,7 @@ scenario.
 
 
 * **Chapter** 5 illustrates how ex-ante accessibility analysis can be used to evaluate the equity and accessibility impacts of different transport project scenarios in their early planning stages using open-source software and standardized datasets. This chapter evaluates the scenarios of full and partial construction of the TransBrasil BRT corridor, currently under development in Rio de Janeiro. It looks more specifically at how these two scenarios could impact employment accessibility of different income groups and how these results vary when different travel time thresholds are considered.
-   * [Paper forthcoming in the _Journal of Transpor Geography_](https://osf.io/sut7r/) 
+   * [Paper under review](https://osf.io/sut7r/) 
 
 
 <img src="https://github.com/rafapereirabr/thesis/blob/master/imgs/map4_diff_jobsmatch_ratio_zoom_in%20-%20Copy_SCALE.png" width="843" height="513">
