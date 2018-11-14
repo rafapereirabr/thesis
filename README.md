@@ -1,6 +1,6 @@
 # Distributive Justice and Transportation Equity: Inequality in accessibility in Rio de Janeiro
 
-This repository contains code related to my PhD thesis "Distributive Justice and Transportation Equity: Inequality in accessibility in Rio de Janeiro", presented for the degree of Doctor of Philosophy at the University of Oxford in 2018. This repository contains the `R` scripts used in the data processing, visualization and analysis presented in the thesis. The preprint of the submitted thesis is available for download [here](https://thesiscommons.org/d2qvm).
+This repository contains code related to my PhD thesis "Distributive Justice and Transportation Equity: Inequality in accessibility in Rio de Janeiro", presented for the degree of Doctor of Philosophy at the University of Oxford in 2018. This repository contains the `R` scripts used in the data processing, visualization and analysis presented in the thesis. The preprint of the submitted thesis is available for download [here](https://ora.ox.ac.uk/objects/uuid:3552ca9f-25c0-4d2f-acdd-0649de911afc).
 
 ![alt text](https://github.com/rafapereirabr/thesis/blob/master/imgs/map1_infra%20legend_compos_north.png)
 
