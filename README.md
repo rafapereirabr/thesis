@@ -2,6 +2,9 @@
 
 This repository contains code related to my PhD thesis "Distributive Justice and Transportation Equity: Inequality in accessibility in Rio de Janeiro", presented for the degree of Doctor of Philosophy at the University of Oxford in 2018. This repository contains the `R` scripts used in the data processing, visualization and analysis presented in the thesis. [My PhD thesis is available for download here](https://ora.ox.ac.uk/objects/uuid:3552ca9f-25c0-4d2f-acdd-0649de911afc).
 
+If you want to cite this code, you can use the following DOI [![DOI](https://zenodo.org/badge/113566756.svg)](https://zenodo.org/badge/latestdoi/113566756)
+
+
 ![alt text](https://github.com/rafapereirabr/thesis/blob/master/imgs/map1_infra%20legend_compos_north.png)
 
 The thesis focuses on the distributional effects of transport policies in terms of how they shape inequalities in people's access to opportunities. In the empirical research, I analyzed how recent transport investments implemented in Rio de Janeiro (Brazil) in preparation to host the 2014 Football World Cup and the 2016 Olympic Games have impacted accessibility to sports venues, healthcare facilities, public schools and job opportunities for different income groups. 
