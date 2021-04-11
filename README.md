@@ -2,7 +2,7 @@
 
 This repository contains code related to my PhD thesis "Distributive Justice and Transportation Equity: Inequality in accessibility in Rio de Janeiro", presented for the degree of Doctor of Philosophy at the University of Oxford in 2018. This repository contains the `R` scripts used in the data processing, visualization and analysis presented in the thesis. [My PhD thesis is available for download here](https://ora.ox.ac.uk/objects/uuid:3552ca9f-25c0-4d2f-acdd-0649de911afc).
 
-If you want to cite this code, you can use the following DOI [![DOI](https://zenodo.org/badge/113566756.svg)](https://zenodo.org/badge/latestdoi/113566756)
+If you want to use this code, please cite the [PhD thesis](https://ora.ox.ac.uk/objects/uuid:3552ca9f-25c0-4d2f-acdd-0649de911afc) or the papers below.
 
 
 ![alt text](https://github.com/rafapereirabr/thesis/blob/master/imgs/map1_infra%20legend_compos_north.png)
@@ -18,7 +18,7 @@ scenario.
    * [[PDF ungated version]](https://www.dropbox.com/s/vbzyug6omz36t7w/Pereira%20%282018%29%20Transport%20legacy%20of%20mega-events%20and%20the%20redistribution%20of%20accessibility.pdf)
 
 * **Chapter 4** estimates how recent transport policies implemented in Rio between 2014 and 2017 have impacted people from different income groups in terms of the number of schools and job opportunities they could reach from their homes via public transport. A spatial regression model and cluster analysis are used to estimate the distributive effects of those transport policies on accessibility inequalities and to test whether these effects are robust when analysis is conducted using different geographical scales and zoning schemes.
-   * [Paper under review](https://osf.io/preprints/socarxiv/cghx2) 
+   * [Paper published in the _Journal of Transport and Land Use_](https://www.jtlu.org/index.php/jtlu/article/view/1523)
 
 <img src="https://github.com/rafapereirabr/thesis/blob/master/imgs/map_income.png" width="422" height="358"> <img src="https://github.com/rafapereirabr/thesis/blob/master/imgs/map4_oAcess_jobsmatch_60_2server.png" width="422" height="358">
 
